@@ -44,14 +44,15 @@ body {
 
 .tool-section {
   margin-bottom: 3rem;
+  border-left: .4rem solid #8b5cf6;
+  padding-left: .6rem;
+  border-radius: 6px;
 }
 
 .tool-section h3 {
   color: #6d28d9;
   font-size: 1rem;
-  margin-bottom: 0.5rem;
-  border-left: 4px solid #8b5cf6;
-  padding-left: 6px;
+  margin-bottom: 0.3rem;
 }
 
 .tool-section ul {
