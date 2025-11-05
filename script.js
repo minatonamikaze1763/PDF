@@ -839,6 +839,9 @@ async function initPdfToJpg() {
 }
 // ========== end =========
 
+
+// ========== pdf editor (almost done)=========
+
 async function initPdfEditor() {
   const dropZone = document.getElementById("dropZone");
   const fileInput = document.getElementById("pdfEditorFile");
