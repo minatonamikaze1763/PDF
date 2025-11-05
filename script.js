@@ -5,7 +5,7 @@ const workspace = document.querySelector('.workspace');
 const tools = {
   merge: `
 <div class="container">
-  <h1>Merge PDF Files</h1>
+  <h1><i class="fa-solid fa-code-merge"></i> Merge PDF Files</h1>
   <label class="dropZone" id="mergeDropZone" for="mergePdfFiles">
     Drag & Drop or Click to Upload PDF Files
   </label>
@@ -18,7 +18,7 @@ const tools = {
   
   split: `
     <div class="container">
-      <h1>Split PDF File</h1>
+      <h1><i class="fa-solid fa-arrows-split-up-and-left"></i>  Split PDF File</h1>
       <label class="dropZone" for="splitPdf">Select or Drop a PDF File</label>
       <input type="file" id="splitPdf" accept=".pdf" />
       <div class="split-options">
@@ -32,7 +32,7 @@ const tools = {
   
   pdfToWord: `
     <div class="container">
-      <h1>PDF ➜ Word Converter</h1>
+      <h1><i class="fa-solid fa-file-word"></i> PDF ➜ Word Converter</h1>
       <label class="dropZone" for="pdfFiles">Select or Drop PDF File</label>
       <input type="file" id="pdfFiles" accept=".pdf" />
       <button id="convertBtn">Convert to Word</button>
@@ -42,7 +42,7 @@ const tools = {
   
   wordToPdf: `
     <div class="container">
-      <h1>Word ➜ PDF Converter</h1>
+      <h1><i class="fa-solid fa-file-word"></i> Word ➜ PDF Converter</h1>
       <label class="dropZone" for="docFiles">Select or Drop Word Files</label>
       <input type="file" id="docFiles" multiple accept=".doc,.docx" />
       <button id="convertBtn">Convert to PDF</button>
@@ -52,7 +52,7 @@ const tools = {
   
   pdfToExcel: `
     <div class="container">
-      <h1>PDF ➜ Excel Converter</h1>
+      <h1><i class="fa-solid fa-file-excel"></i> PDF ➜ Excel Converter</h1>
       <label class="dropZone" for="pdfToExcelFiles">Select or Drop PDF File</label>
       <input type="file" id="pdfToExcelFiles" accept=".pdf" />
       <button id="convertBtn">Convert to Excel</button>
@@ -62,7 +62,7 @@ const tools = {
   
   excelToPdf: `
     <div class="container">
-      <h1>Excel ➜ PDF Converter</h1>
+      <h1><i class="fa-solid fa-file-excel"></i> Excel ➜ PDF Converter</h1>
       <label class="dropZone" for="excelFiles">Select Excel Files</label>
       <input type="file" id="excelFiles" multiple accept=".xls,.xlsx" />
       <button id="convertBtn">Convert to PDF</button>
@@ -72,7 +72,7 @@ const tools = {
   
   jpgToPdf: `
     <div class="container">
-      <h1>JPG ➜ PDF Converter</h1>
+      <h1><i class="fa-solid fa-file-image"></i>  JPG ➜ PDF Converter</h1>
       <label class="dropZone" for="jpgFiles">Select Image Files</label>
       <input type="file" id="jpgFiles" multiple accept=".jpg,.jpeg,.png" />
       <button id="convertBtn">Convert to PDF</button>
@@ -81,7 +81,7 @@ const tools = {
   `,
   pdfToJpg: `
   <div class="container">
-    <h1>PDF ➜ JPG Converter</h1>
+    <h1><i class="fa-solid fa-file-image"></i>  PDF ➜ JPG Converter</h1>
     <label class="dropZone" for="pdfToJpgInput">Select PDF File</label>
     <input type="file" id="pdfToJpgInput" accept=".pdf" />
     <button id="convertToJpgBtn">Convert to JPG</button>
@@ -91,7 +91,7 @@ const tools = {
 `,
   pdfEditor: `
     <div class="container">
-      <h1>PDF Text Editor</h1>
+      <h1><i class="fa-solid fa-pen-to-square"></i>  PDF Text Editor</h1>
       <p>Upload a PDF to preview and edit text.</p>
       <input type="file" id="pdfEditorFile" accept=".pdf" />
       <canvas id="pdfCanvas" style="border:1px solid #ccc; width:100%; margin-top:1rem;"></canvas>
