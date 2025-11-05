@@ -127,7 +127,7 @@ loadTool('merge');
 document.querySelectorAll('.tool-section li').forEach((item) => {
   item.addEventListener('click', () => {
     const text = item.textContent.trim().toLowerCase();
-        
+    
     if (text.includes('merge')) loadTool('merge');
     else if (text.includes('split')) loadTool('split');
     else if (text.includes('pdf to word')) loadTool('pdfToWord');
@@ -270,7 +270,7 @@ function initMerge() {
       });
     });
   }
-
+  
   // 🧩 Merge action
   generateBtn.addEventListener('click', async () => {
     if (mergeFiles.length === 0) {
@@ -300,7 +300,6 @@ function initMerge() {
     }
   });
 }
-function initPdfEditor(param) {}
 
 function initSplit() {
   const btn = document.getElementById('splitBtn');

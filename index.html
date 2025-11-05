@@ -9,7 +9,7 @@
   <title>PDF Tool by Nandhu</title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  
   <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -23,7 +23,18 @@
     <!-- ✅ Sidebar -->
     <aside class="sidebar">
       <h2><i class="fa-solid fa-file-pdf"></i> PDF Tools</h2>
-      
+      <div class="tool-section">
+        <h3>Organize PDFs</h3>
+        <ul>
+          <li><a href="#" class="active"><i class="fa-solid fa-code-merge"></i> Merge PDFs</a></li>
+          <li><a href="#"><i class="fa-solid fa-arrows-split-up-and-left"></i> Split PDF</a></li>
+          <!--           <li><a href="#">Add or Delete Pages</a></li>
+<li><a href="#">Reorder Pages</a></li>
+<li><a href="#">Rotate Pages</a></li>
+ -->
+          <li><a href="#"><i class="fa-solid fa-pen-to-square"></i> Edit Text (Preview Mode)</a></li>
+        </ul>
+      </div>
       <div class="tool-section">
         <h3>Convert from PDF</h3>
         <ul>
@@ -42,24 +53,13 @@
         </ul>
       </div>
       
-      <div class="tool-section">
-        <h3>Organize PDFs</h3>
-        <ul>
-          <li><a href="#" class="active"><i class="fa-solid fa-code-merge"></i> Merge PDFs</a></li>
-          <li><a href="#"><i class="fa-solid fa-arrows-split-up-and-left"></i> Split PDF</a></li>
-          <!--           <li><a href="#">Add or Delete Pages</a></li>
-<li><a href="#">Reorder Pages</a></li>
-<li><a href="#">Rotate Pages</a></li>
- -->
-          <li><a href="#"><i class="fa-solid fa-pen-to-square"></i> Edit Text (Preview Mode)</a></li>
-        </ul>
-      </div>
+      
     </aside>
     
     <!-- ✅ Main Workspace -->
     <main class="workspace">
       <div class="container">
-        <h1><i class="fa-solid fa-code-merge"></i>  Merge PDF Files</h1>
+        <h1><i class="fa-solid fa-code-merge"></i> Merge PDF Files</h1>
         <label class="dropZone" id="mergeDropZone" for="mergePdfFiles">
           Drag & Drop or Click to Upload PDF Files
         </label>

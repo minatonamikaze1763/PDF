@@ -35,7 +35,7 @@ body {
 
 .sidebar h2 {
   color: #5b21b6;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   font-size: 1.4rem;
   text-align: center;
   border-bottom: 2px solid #b084f0;
@@ -43,7 +43,7 @@ body {
 }
 
 .tool-section {
-  margin-top: 2rem;
+  margin-bottom: 3rem;
 }
 
 .tool-section h3 {
@@ -58,10 +58,11 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
+  padding-top: .2rem;
 }
 
 .tool-section li {
-  margin: 0.4rem 0;
+  margin: 0.6rem 0;
 }
 
 .tool-section a {
@@ -75,14 +76,17 @@ body {
   border: 1px solid transparent;
 }
 
-.tool-section a:hover,
-.tool-section a.active{
+.tool-section a:hover{
   background: #e9d5ff;
   color: #3b0764;
   border-color: #c084fc;
   transform: translateX(3px);
 }
-
+.tool-section a.active{
+  background: #e9d5ff;
+color: #3b0764;
+border-color: #c084fc;
+}
 /* ===== Main Workspace ===== */
 .workspace {
   flex: 1;
