@@ -21,12 +21,8 @@ const tools = {
       <h1><i class="fa-solid fa-arrows-split-up-and-left"></i>  Split PDF File</h1>
       <label class="dropZone" for="splitPdf">Select or Drop a PDF File</label>
       <input type="file" id="splitPdf" accept=".pdf" />
-      <div class="split-options options">
-        <label>Page Range (e.g., 1-3 or 5):</label>
-        <input type="text" id="pageRange" placeholder="Enter pages to split..." />
-      </div>
       <button id="splitBtn">Split PDF</button>
-      <div id="status"></div>
+      <div id="status" class="status"></div>
     </div>
   `,
   
@@ -183,7 +179,7 @@ function initTool(name) {
   }
 }
 
-// ========= Empty Tool Handlers (for now) ==========
+// ========== Merge =========
 function initMerge() {
   const dropZone = document.getElementById('mergeDropZone');
   const pdfInput = document.getElementById('mergePdfFiles');
@@ -300,11 +296,82 @@ function initMerge() {
     }
   });
 }
+// ========== end =========
 
-function initSplit() {
-  const btn = document.getElementById('splitBtn');
-  btn.addEventListener('click', () => alert("Split function not implemented yet."));
+// ========== Split =========
+async function splitPdfFile() {
+  const input = document.getElementById('splitPdf');
+  const status = document.getElementById('status');
+  const file = input.files[0];
+  
+  if (!file) {
+    status.textContent = "Please select a PDF file first.";
+    return;
+  }
+  
+  status.textContent = "Processing... Please wait ⏳";
+  
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const srcPdf = await PDFLib.PDFDocument.load(arrayBuffer);
+    const totalPages = srcPdf.getPageCount();
+    const zip = new JSZip();
+    
+    for (let i = 0; i < totalPages; i++) {
+      const newPdf = await PDFLib.PDFDocument.create();
+      const [copiedPage] = await newPdf.copyPages(srcPdf, [i]);
+      newPdf.addPage(copiedPage);
+      const pdfBytes = await newPdf.save();
+      
+      const fileName = `${file.name.replace('.pdf', '')}_page${i + 1}.pdf`;
+      zip.file(fileName, pdfBytes);
+      
+      // Optional: live progress
+      status.textContent = `Splitting page ${i + 1} of ${totalPages}...`;
+    }
+    
+    // Generate and download ZIP
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${file.name.replace('.pdf', '')}_split_pages.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    status.textContent = `✅ Split ${totalPages} pages and downloaded as ZIP.`;
+  } catch (err) {
+    console.error(err);
+    status.textContent = "❌ Error splitting PDF.";
+  }
 }
+function initSplit() {
+  const fileInput = document.getElementById('splitPdf');
+  const btn = document.getElementById('splitBtn');
+  const status = document.getElementById('status');
+  
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      status.textContent = "No file selected.";
+      return;
+    }
+    
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+      const totalPages = pdfDoc.getPageCount();
+      status.innerHTML = `📄 Selected: <b>${file.name}</b> (${totalPages} pages)`;
+    } catch {
+      status.textContent = "❌ Invalid PDF file.";
+    }
+  });
+  
+  btn.addEventListener('click', splitPdfFile);
+}
+// ========== end =========
+
+
 
 function initPdfToWord() {
   const btn = document.getElementById('convertBtn');

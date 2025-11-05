@@ -146,7 +146,26 @@ input:focus{
 .dropZone.dragging{
   background: #ede9fe;
 }
-
+.draggable-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+.draggable-item {
+  background: var(--card-bg, #f2f2f2);
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: grab;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+}
+.draggable-item.dragging {
+  opacity: 0.5;
+  background: var(--accent, #dcdcdc);
+}
 #pdfFiles {
   display: none;
 }
