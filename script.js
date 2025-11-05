@@ -49,7 +49,8 @@ function displayFiles() {
   // render list (numbered via CSS list-style or you can add numbers manually)
   fileNameDiv.innerHTML = `
     <div class="file-list">
-<span class="indicator">Files loaded: ${pdfFiles.length} (Maximum allowed: 9999)</span>      <button id="sortBtn" type="button">${sortAsc ? "Sort ↓ (Z-A)" : "Sort ↑ (A-Z)"}</button>
+<span class="indicator">Total PDF Files loaded: ${pdfFiles.length}</span>     
+<button id="sortBtn" type="button">${sortAsc ? "Sort ↓ (Z-A)" : "Sort ↑ (A-Z)"}</button>
       <ul>
         ${pdfFiles.map((f, i) => `
           <li>
