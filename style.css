@@ -25,6 +25,10 @@ body {
 
 /* ===== Sidebar ===== */
 .sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
   width: 260px;
   background: #f4e8ff;
   border-right: 2px solid #b084f0;
@@ -93,8 +97,9 @@ border-color: #c084fc;
   flex: 1;
   display: flex;
   align-items: start;
-  padding: 3rem;
+  padding: 3rem 1rem;
   justify-content: center;
+  padding-left: 20rem;
 }
 
 .container {
