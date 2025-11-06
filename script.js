@@ -568,11 +568,54 @@ function initWordToPdf() {
 }
 // ========== end =========
 
-function initPdfToExcel() {
-  const btn = document.getElementById('convertBtn');
-  btn.addEventListener('click', () => alert("PDF ➜ Excel function not implemented yet."));
+async function initPdfToExcel() {
+  const fileInput = document.getElementById('pdfToExcelFiles');
+  const convertBtn = document.getElementById('convertBtn');
+  const statusDiv = document.getElementById('status');
+  
+  convertBtn.addEventListener('click', async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      statusDiv.textContent = "Please select a PDF file first.";
+      return;
+    }
+    
+    statusDiv.textContent = "Processing PDF...";
+    
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      
+      // Load PDF using pdfjs-dist (for text extraction)
+      const pdfjsLib = window['pdfjsLib'];
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      
+      const excelData = [];
+      
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const textItems = content.items.map(item => item.str);
+        const text = textItems.join(' ');
+        
+        excelData.push({ Page: i, Content: text });
+      }
+      
+      // Create a new workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(excelData);
+      XLSX.utils.book_append_sheet(wb, ws, "PDF_Content");
+      
+      // Export the Excel file
+      const excelFileName = file.name.replace(/\.pdf$/i, ".xlsx");
+      XLSX.writeFile(wb, excelFileName);
+      
+      statusDiv.textContent = "✅ Conversion successful! File downloaded.";
+    } catch (err) {
+      console.error(err);
+      statusDiv.textContent = "❌ Error converting PDF to Excel.";
+    }
+  });
 }
-
 function initExcelToPdf() {
   const btn = document.getElementById('convertBtn');
   btn.addEventListener('click', () => alert("Excel ➜ PDF function not implemented yet."));
