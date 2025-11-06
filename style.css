@@ -40,7 +40,7 @@ body {
 
 .sidebar h2 {
   color: #5b21b6;
-  margin:0;
+  margin: 0;
   margin-bottom: 2rem;
   font-size: 1.4rem;
   text-align: center;
@@ -54,9 +54,11 @@ body {
   padding-left: .6rem;
   border-radius: 6px;
 }
-.tool-section p{
+
+.tool-section p {
   line-height: 2rem;
 }
+
 .tool-section h3 {
   color: #6d28d9;
   font-size: 1rem;
@@ -74,7 +76,8 @@ body {
   margin: 0.6rem 0;
 }
 
-.tool-section a ,p{
+.tool-section a,
+p {
   text-decoration: none;
   color: #4c1d95;
   background: #f9f5ff;
@@ -85,17 +88,19 @@ body {
   border: 1px solid transparent;
 }
 
-.tool-section a:hover{
+.tool-section a:hover {
   background: #e9d5ff;
   color: #3b0764;
   border-color: #c084fc;
   transform: translateX(3px);
 }
-.tool-section a.active{
+
+.tool-section a.active {
   background: #e9d5ff;
-color: #3b0764;
-border-color: #c084fc;
+  color: #3b0764;
+  border-color: #c084fc;
 }
+
 /* ===== Main Workspace ===== */
 .workspace {
   flex: 1;
@@ -118,34 +123,41 @@ border-color: #c084fc;
   display: flex;
   flex-direction: column;
 }
+
 .doc-section {
   margin-top: 3rem;
   width: 400px;
 }
-.doc-section ul{
+
+.doc-section ul {
   text-align: left;
 }
-.doc-section ul li{
+
+.doc-section ul li {
   margin-bottom: .8rem;
   line-height: 1.6rem;
   padding: 5px;
   border-radius: 5px;
   background: var(--background-color);
 }
+
 h1 {
   color: var(--heading-color);
   margin-top: 0;
   margin-bottom: 2rem;
 }
-input{
+
+input {
   border: 1px solid var(--border-color);
   padding: 10px 10px;
   border-radius: 5px;
   margin: 0 1rem;
 }
-input:focus{
+
+input:focus {
   outline: 2px solid var(--border-color);
 }
+
 /* Drag & Drop */
 .dropZone {
   border: 2px dashed var(--primary-color);
@@ -157,20 +169,24 @@ input:focus{
   margin-bottom: 2rem;
   transition: 0.3s;
 }
+
 canvas {
   border: 1px solid #ccc;
   margin-top: 1rem;
   width: 100%;
 }
-.dropZone:hover ,
-.dropZone.dragging{
+
+.dropZone:hover,
+.dropZone.dragging {
   background: #ede9fe;
 }
+
 .draggable-list {
   list-style: none;
   padding: 0;
   margin: 10px 0;
 }
+
 .draggable-item {
   background: var(--card-bg, #f2f2f2);
   margin: 6px 0;
@@ -182,16 +198,20 @@ canvas {
   align-items: center;
   transition: background 0.2s;
 }
+
 .draggable-item.dragging {
   opacity: 0.5;
   background: var(--accent, #dcdcdc);
 }
+
 #pdfFiles {
   display: none;
 }
-.options{
+
+.options {
   margin-bottom: 1rem;
 }
+
 /* Buttons */
 button {
   background: var(--primary-color);
@@ -209,7 +229,7 @@ button:hover {
 
 /* Status */
 .status,
-#status{
+#status {
   margin: 1rem;
   color: var(--text-color);
   font-weight: bold;
@@ -244,22 +264,23 @@ button:hover {
   .app-layout {
     flex-direction: column;
   }
-
+  
   .sidebar {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
     justify-content: space-around;
   }
-
+  
   .workspace {
     padding: 2rem 1rem;
   }
-
+  
   .tool-section {
     min-width: 220px;
   }
 }
+
 .output-images {
   display: flex;
   flex-direction: column;
@@ -288,6 +309,7 @@ button:hover {
   text-decoration: underline;
   font-weight: 500;
 }
+
 input[type="file"] {
   display: none;
 }
@@ -304,7 +326,7 @@ button {
 }
 
 button.remove-btn {
-  background:#ff4b4b ;
+  background: #ff4b4b;
   border: none;
   color: white;
   border-radius: 4px;
@@ -342,17 +364,21 @@ button.remove-btn {
 .merge-option label {
   cursor: pointer;
 }
+
 /* 🖼️ JPG to PDF Image File List */
 .img-file-list {
   margin-top: 0.5rem;
   text-align: left;
 }
+
 input[type="checkbox"] {
   width: 28px;
   height: 28px;
-  accent-color: var(--accent-color); /* Optional: match your theme color */
+  accent-color: var(--accent-color);
+  /* Optional: match your theme color */
   cursor: pointer;
 }
+
 .img-indicator {
   font-weight: 600;
   display: inline-block;
@@ -464,4 +490,32 @@ input[type="checkbox"] {
 
 #saveEditedPdf:hover {
   background: #1565c0;
+}
+
+
+
+
+
+
+
+
+.page-wrapper {
+  position: relative;
+  display: inline-block;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.textLayer .text-span {
+  position: absolute;
+  transform-origin: 0 0;
+  line-height: 1;
+  color: transparent;
+  outline: none;
+  user-select: text;
+}
+
+.textLayer .text-span:focus {
+  color: black;
+  background: rgba(255, 255, 0, 0.2);
 }
