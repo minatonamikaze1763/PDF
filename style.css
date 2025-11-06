@@ -20,6 +20,7 @@ body {
 
 .app-layout {
   display: flex;
+  
   min-height: 100vh;
 }
 
@@ -100,13 +101,13 @@ border-color: #c084fc;
   flex: 1;
   display: flex;
   align-items: start;
-  padding: 3rem 1rem;
-  justify-content: center;
-  padding-left: 20rem;
+  padding: 3rem 2rem;
+  flex-direction: column;
 }
 
 .container {
   width: 100%;
+  margin: 0 auto;
   max-width: 700px;
   background: var(--container-bg);
   border-radius: 12px;
@@ -117,7 +118,20 @@ border-color: #c084fc;
   display: flex;
   flex-direction: column;
 }
-
+.doc-section {
+  margin-top: 3rem;
+  width: 400px;
+}
+.doc-section ul{
+  text-align: left;
+}
+.doc-section ul li{
+  margin-bottom: .8rem;
+  line-height: 1.6rem;
+  padding: 5px;
+  border-radius: 5px;
+  background: var(--background-color);
+}
 h1 {
   color: var(--heading-color);
   margin-top: 0;
