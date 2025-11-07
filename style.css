@@ -107,6 +107,7 @@ p {
   display: flex;
   align-items: start;
   padding: 3rem 2rem;
+  margin-left : 20rem;
   flex-direction: column;
 }
 
@@ -126,7 +127,7 @@ p {
 
 .doc-section {
   margin-top: 3rem;
-  width: 400px;
+  max-width: 490px;
 }
 
 .doc-section ul {
