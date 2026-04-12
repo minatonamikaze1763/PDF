@@ -49,56 +49,97 @@
 <body>
   <div class="app-layout">
     <!-- ✅ Sidebar -->
+   
     <aside class="sidebar">
-      <h2><i class="fa-solid fa-file-pdf"></i> PDF Tools</h2>
-      <div class="tool-section">
-        <h3>Organize PDFs</h3>
-        <ul>
-          <li><a href="#" class="active"><i class="fa-solid fa-code-merge"></i> Merge PDFs</a></li>
-          <li><a href="#"><i class="fa-solid fa-arrows-split-up-and-left"></i> Split PDF</a></li>
-          <!--           <li><a href="#">Add or Delete Pages</a></li>
-<li><a href="#">Reorder Pages</a></li>
-<li><a href="#">Rotate Pages</a></li>
- -->
-          <li><a href="#"><i class="fa-solid fa-pen-to-square"></i> Edit Text (Preview Mode)</a></li>
-        </ul>
-      </div>
-      <div class="tool-section">
-        <h3>Convert from PDF</h3>
-        <ul>
-          <!--           <li><a href="#"> <i class="fa-solid fa-file-word"></i> PDF to Word </a> </li> -->
-          <li><a href="#"><i class="fa-solid fa-file-image"></i> PDF to JPG</a></li>
-          <!--           <li><a href="#"><i class="fa-solid fa-file-excel"></i> PDF to Excel</a></li>
- -->
-        </ul>
-      </div>
-      
-      <div class="tool-section">
-        <h3>Convert to PDF</h3>
-        <ul>
-          <li><a href="#"><i class="fa-solid fa-file-image"></i> JPG to PDF</a></li>
-          <!--           <li><a href="#"><i class="fa-solid fa-file-word"></i> Word to PDF</a></li>
- -->
-          <li><a href="#"><i class="fa-solid fa-file-excel"></i> Excel to PDF</a></li>
-        </ul>
-      </div>
-      
-    </aside>
-    
+  <h2><i class="fa-solid fa-file-pdf"></i> PDF Tools</h2>
+  
+  <div class="tool-section">
+    <h3>Organize PDFs</h3>
+    <ul>
+      <li><a href="#" class="active" data-tool="merge"><i class="fa-solid fa-code-merge"></i> Merge PDFs</a></li>
+      <li><a href="#" data-tool="split"><i class="fa-solid fa-arrows-split-up-and-left"></i> Split PDF</a></li>
+      <li><a href="#" data-tool="edit"><i class="fa-solid fa-pen-to-square"></i> Edit Text</a></li>
+    </ul>
+  </div>
+  
+  <div class="tool-section">
+    <h3>Convert from PDF</h3>
+    <ul>
+      <li><a href="#" data-tool="pdfToJpg"><i class="fa-solid fa-file-image"></i> PDF to JPG</a></li>
+    </ul>
+  </div>
+  
+  <div class="tool-section">
+    <h3>Convert to PDF</h3>
+    <ul>
+      <li><a href="#" data-tool="jpgToPdf"><i class="fa-solid fa-file-image"></i> JPG to PDF</a></li>
+      <li><a href="#" data-tool="excelToPdf"><i class="fa-solid fa-file-excel"></i> Excel to PDF</a></li>
+    </ul>
+  </div>
+  
+  <!-- 🔥 NEW SECTION -->
+  <div class="tool-section">
+    <h3>Compression</h3>
+    <ul>
+      <li><a href="#" data-tool="compressPdf"><i class="fa-solid fa-file-zipper"></i> Compress PDF</a></li>
+      <li><a href="#" data-tool="compressImg"><i class="fa-solid fa-image"></i> Compress Images</a></li>
+    </ul>
+  </div>
+</aside>
     <!-- ✅ Main Workspace -->
-    <main class="workspace">
-      <div class="container">
-        <h1><i class="fa-solid fa-code-merge"></i> Merge PDF Files</h1>
-        <label class="dropZone" id="mergeDropZone" for="mergePdfFiles">
-          Drag & Drop or Click to Upload PDF Files
-        </label>
-        <input type="file" id="mergePdfFiles" multiple accept=".pdf" />
-        <button id="mergeGenerateBtn">Generate Merged PDF</button>
-        <div id="mergeStatus" class="status"></div>
-        <div id="mergeFileList"></div>
-      </div>
-    </main>
+    <main class="workspace" id="workspace">
+  
+  <!-- ✅ DEFAULT TOOL (Merge PDF) -->
+  <div class="container" id="mergeTool">
+    <h1><i class="fa-solid fa-code-merge"></i> Merge PDF Files</h1>
     
+    <label class="dropZone" id="mergeDropZone" for="mergePdfFiles">
+      Drag & Drop or Click to Upload PDF Files
+    </label>
+    
+    <input type="file" id="mergePdfFiles" multiple accept=".pdf" />
+    
+    <button id="mergeGenerateBtn">Generate Merged PDF</button>
+    
+    <div id="mergeStatus" class="status"></div>
+    <div id="mergeFileList"></div>
+  </div>
+  
+  <!-- 🔥 COMPRESS PDF TOOL -->
+  <div class="container" id="compressPdfTool" style="display:none;">
+    <h1><i class="fa-solid fa-file-zipper"></i> Compress PDF</h1>
+    
+    <label class="dropZone" for="pdfCompressInput">
+      Drop or Select PDF Files
+    </label>
+    
+    <input type="file" id="pdfCompressInput" multiple accept=".pdf" />
+    <input type="number" id="pdfTargetSize" placeholder="Target size (KB)" />
+    
+    <div id="pdfCompressList" class="file-list"></div>
+    
+    <button id="compressPdfBtn">Compress PDF</button>
+    <div id="pdfCompressStatus" class="status"></div>
+  </div>
+  
+  <!-- 🔥 COMPRESS IMAGE TOOL -->
+  <div class="container" id="compressImgTool" style="display:none;">
+    <h1><i class="fa-solid fa-image"></i> Compress Images</h1>
+    
+    <label class="dropZone" for="imgCompressInput">
+      Drop or Select Images
+    </label>
+    
+    <input type="file" id="imgCompressInput" multiple accept="image/*" />
+    <input type="number" id="imgTargetSize" placeholder="Target size (KB)" />
+    
+    <div id="imgCompressList" class="file-list"></div>
+    
+    <button id="compressImgBtn">Compress Images</button>
+    <div id="imgCompressStatus" class="status"></div>
+  </div>
+  
+</main>
   </div>
   
   <script src="script.js"></script>

@@ -142,7 +142,52 @@ const tools = {
         <button id="reorderPage">Reorder</button>
       </div>
     </div>
-  `
+  `,
+  compressPdf: `
+<div class="container">
+  <h1><i class="fa-solid fa-file-zipper"></i> Compress PDF</h1>
+
+  <label class="dropZone" id="pdfCompressDrop" for="pdfCompressInput">
+    Drag & Drop or Click to Upload PDFs
+  </label>
+
+  <input type="file" id="pdfCompressInput" multiple accept=".pdf" />
+
+  <div class="input-group">
+    <label>Target Size (KB)</label>
+    <input type="number" id="pdfTargetSize" placeholder="Enter size in KB" />
+  </div>
+
+  <div id="pdfCompressList" class="file-list"></div>
+
+  <button id="compressPdfBtn">Compress PDFs</button>
+
+  <div id="pdfCompressStatus" class="status"></div>
+</div>
+`,
+  
+  compressImg: `
+<div class="container">
+  <h1><i class="fa-solid fa-image"></i> Compress Images</h1>
+
+  <label class="dropZone" id="imgCompressDrop" for="imgCompressInput">
+    Drag & Drop or Click to Upload Images
+  </label>
+
+  <input type="file" id="imgCompressInput" multiple accept="image/*" />
+
+  <div class="input-group">
+    <label>Target Size (KB)</label>
+    <input type="number" id="imgTargetSize" placeholder="Enter size in KB" />
+  </div>
+
+  <div id="imgCompressList" class="file-list"></div>
+
+  <button id="compressImgBtn">Compress Images</button>
+
+  <div id="imgCompressStatus" class="status"></div>
+</div>
+`,
 };
 
 // ========= Initialization ==========
@@ -169,26 +214,24 @@ function getToolIdFromText(text) {
 }
 
 // ========= Sidebar Navigation ==========
-const toolItems = document.querySelectorAll('.tool-section li');
-toolItems.forEach((item) => {
-  item.addEventListener('click', () => {
-    const visibleText = item.textContent.trim(); // store visible text
-    localStorage.setItem('selectedToolText', visibleText); // persist
+const toolLinks = document.querySelectorAll('.tool-section a');
+
+toolLinks.forEach((link) => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
     
-    const toolId = getToolIdFromText(visibleText);
+    const toolId = link.dataset.tool;
+    
+    // save tool id (not text)
+    localStorage.setItem('selectedTool', toolId);
+    
     loadTool(toolId);
     
-    // manage active classes on li
-    toolItems.forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
-    
-    // also try to highlight any matching .sidebar a by text (if present)
-    document.querySelectorAll('.sidebar a').forEach(a => {
-      a.classList.toggle('active', a.textContent.trim().toLowerCase() === visibleText.toLowerCase());
-    });
+    // active class handling
+    toolLinks.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
   });
 });
-
 // highlight when clicking sidebar links (keeps existing behavior)
 document.querySelectorAll('.sidebar a').forEach(link => {
   link.addEventListener('click', e => {
@@ -199,25 +242,15 @@ document.querySelectorAll('.sidebar a').forEach(link => {
 
 // ========= Restore last selected tool on reload ==========
 window.addEventListener('DOMContentLoaded', () => {
-  const lastText = localStorage.getItem('selectedToolText');
-  if (lastText) {
-    // find the li whose visible text matches stored text (case-insensitive)
-    const matched = Array.from(toolItems).find(i => i.textContent.trim().toLowerCase() === lastText.toLowerCase());
-    const toolId = getToolIdFromText(lastText);
-    loadTool(toolId);
+  const lastTool = localStorage.getItem('selectedTool');
+  
+  if (lastTool) {
+    loadTool(lastTool);
     
-    // mark active li if found
-    if (matched) {
-      toolItems.forEach(i => i.classList.remove('active'));
-      matched.classList.add('active');
-    }
-    
-    // mark active sidebar link if text matches
-    document.querySelectorAll('.sidebar a').forEach(a => {
-      a.classList.toggle('active', a.textContent.trim().toLowerCase() === lastText.toLowerCase());
+    document.querySelectorAll('.tool-section a').forEach(a => {
+      a.classList.toggle('active', a.dataset.tool === lastTool);
     });
   } else {
-    // fallback
     loadTool('merge');
   }
 });
@@ -227,36 +260,56 @@ function initTool(name) {
     case 'merge':
       initMerge();
       break;
+      
     case 'split':
       initSplit();
       break;
+      
     case 'pdfToWord':
       initPdfToWord();
       break;
+      
     case 'wordToPdf':
       initWordToPdf();
       break;
+      
     case 'pdfToExcel':
       initPdfToExcel();
       break;
+      
     case 'excelToPdf':
       initExcelToPdf();
       break;
+      
     case 'jpgToPdf':
       initJpgToPdf();
       break;
+      
     case 'pdfToJpg':
       initPdfToJpg();
       break;
+      
     case 'pdfEditor':
       initPdfEditor();
       break;
+      
     case 'organizer':
       initOrganizer();
       break;
+      
+      // 🔥 NEW TOOLS
+    case 'compressPdf':
+      initPdfCompressor();
+      break;
+      
+    case 'compressImg':
+      initImageCompressor();
+      break;
+      
+    default:
+      console.warn(`No init function found for tool: ${name}`);
   }
 }
-
 // ========== Merge =========
 function initMerge() {
   const dropZone = document.getElementById('mergeDropZone');
@@ -1190,4 +1243,242 @@ function initOrganizer() {
   document.getElementById('deletePage').addEventListener('click', () => alert("Delete Page feature not implemented yet."));
   document.getElementById('rotatePage').addEventListener('click', () => alert("Rotate feature not implemented yet."));
   document.getElementById('reorderPage').addEventListener('click', () => alert("Reorder feature not implemented yet."));
+}
+
+
+function initImageCompressor() {
+  const input = document.getElementById("imgCompressInput");
+  const list = document.getElementById("imgCompressList");
+  const btn = document.getElementById("compressImgBtn");
+  const status = document.getElementById("imgCompressStatus");
+  const targetInput = document.getElementById("imgTargetSize");
+  
+  let files = [];
+  
+  input.addEventListener("change", (e) => {
+    files = Array.from(e.target.files);
+    render();
+  });
+  
+  function render() {
+    list.innerHTML = files.map(f => `<p>${f.name}</p>`).join("");
+  }
+  
+  btn.addEventListener("click", async () => {
+    const targetKB = parseInt(targetInput.value);
+    if (!targetKB || files.length === 0) {
+      status.innerHTML = "<span style='color:red'>Enter target KB & select files</span>";
+      return;
+    }
+    
+    status.textContent = "Compressing images...";
+    const zip = new JSZip();
+    
+    for (let file of files) {
+      const compressed = await compressImage(file, targetKB);
+      zip.file(file.name, compressed);
+    }
+    
+    const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, "compressed_images.zip");
+    
+    status.innerHTML = "<span style='color:green'>✅ Images compressed</span>";
+  });
+  
+  async function compressImage(file, targetKB) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const reader = new FileReader();
+      
+      reader.onload = e => img.src = e.target.result;
+      reader.readAsDataURL(file);
+      
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        let quality = 0.9;
+        
+        function attempt() {
+          ctx.drawImage(img, 0, 0);
+          
+          canvas.toBlob((blob) => {
+            if (blob.size / 1024 <= targetKB || quality <= 0.1) {
+              resolve(blob);
+            } else {
+              quality -= 0.05;
+              attempt();
+            }
+          }, "image/jpeg", quality);
+        }
+        
+        attempt();
+      };
+    });
+  }
+}
+
+
+function initPdfCompressor() {
+  const input = document.getElementById("pdfCompressInput");
+  const btn = document.getElementById("compressPdfBtn");
+  const status = document.getElementById("pdfCompressStatus");
+  const targetInput = document.getElementById("pdfTargetSize");
+  const list = document.getElementById("pdfCompressList");
+  
+  let files = [];
+  
+  // 📂 Handle file selection
+  input.addEventListener("change", (e) => {
+    files = Array.from(e.target.files);
+    renderFileList();
+  });
+  
+  // 📋 Render file list UI
+  function renderFileList() {
+    const list = document.getElementById("pdfCompressList");
+    
+    // clear and create UL
+    list.innerHTML = "<ul></ul>";
+    const ul = list.querySelector("ul");
+    
+    let totalSize = 0;
+    
+    files.forEach((file, index) => {
+      const sizeKB = file.size / 1024;
+      totalSize += sizeKB;
+      
+      const li = document.createElement("li");
+      
+      li.innerHTML = `
+      <span>${file.name} (${sizeKB.toFixed(1)} KB)</span>
+      <button class="remove-btn">x</button>
+    `;
+      
+      // ❌ remove file
+      li.querySelector(".remove-btn").onclick = () => {
+        files.splice(index, 1);
+        renderFileList();
+      };
+      
+      ul.appendChild(li);
+    });
+    
+    // 🔥 Optional: show total summary
+    if (files.length > 0) {
+      const summary = document.createElement("div");
+      summary.className = "indicator";
+      summary.textContent = `Total Files: ${files.length} | Total Size: ${(totalSize / 1024).toFixed(2)} MB`;
+      
+      list.appendChild(summary);
+    }
+  }
+  // 🚀 Compress button
+  btn.addEventListener("click", async () => {
+    const targetKB = parseInt(targetInput.value);
+    
+    if (!targetKB || files.length === 0) {
+      status.innerHTML = "<span style='color:red'>Enter target KB & select PDFs</span>";
+      return;
+    }
+    
+    status.textContent = "Compressing PDFs...";
+    const zip = new JSZip();
+    
+    for (let file of files) {
+      const result = await compressPDF(file, targetKB);
+      
+      zip.file(file.name, result.bytes);
+      
+      status.innerHTML = `
+  ✅ ${file.name} → ${result.sizeKB.toFixed(1)} KB (Closest to ${targetKB} KB)
+`;
+      
+      
+    }
+    
+    const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, "compressed_pdfs.zip");
+    
+    status.innerHTML = "<span style='color:green'>✅ PDFs compressed successfully</span>";
+  });
+  
+  // 🔥 REAL PDF compression (fixed)
+  async function compressPDF(file, targetKB) {
+    const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+    const { PDFDocument } = PDFLib;
+    
+    let bestOutput = null;
+    let bestDiff = Infinity;
+    let bestSize = 0;
+    
+    // 🎯 Try different scales + qualities
+    const scales = [1.5, 1.2, 1.0, 0.8];
+    const qualities = [0.9, 0.7, 0.5, 0.3, 0.2];
+    
+    for (let scale of scales) {
+      for (let quality of qualities) {
+        
+        const newPdf = await PDFDocument.create();
+        
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          
+          const viewport = page.getViewport({ scale });
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          
+          await page.render({
+            canvasContext: ctx,
+            viewport: viewport
+          }).promise;
+          
+          const blob = await new Promise(resolve =>
+            canvas.toBlob(resolve, "image/jpeg", quality)
+          );
+          
+          const imgBytes = await blob.arrayBuffer();
+          const img = await newPdf.embedJpg(imgBytes);
+          
+          const newPage = newPdf.addPage([viewport.width, viewport.height]);
+          
+          newPage.drawImage(img, {
+            x: 0,
+            y: 0,
+            width: viewport.width,
+            height: viewport.height
+          });
+        }
+        
+        const outputBytes = await newPdf.save();
+        const sizeKB = outputBytes.byteLength / 1024;
+        
+        const diff = Math.abs(sizeKB - targetKB);
+        
+        // ✅ Save best match
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          bestOutput = outputBytes;
+          bestSize = sizeKB;
+        }
+        
+        // 🎯 Perfect or very close → stop early
+        if (sizeKB <= targetKB && diff < 20) {
+          return { bytes: outputBytes, sizeKB };
+        }
+      }
+    }
+    
+    // fallback best
+    return { bytes: bestOutput, sizeKB: bestSize };
+  }
+  
+  
+  
 }

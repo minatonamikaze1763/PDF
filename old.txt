@@ -1,0 +1,35 @@
+    <aside class="sidebar">
+      <h2><i class="fa-solid fa-file-pdf"></i> PDF Tools</h2>
+      <div class="tool-section">
+        <h3>Organize PDFs</h3>
+        <ul>
+          <li><a href="#" class="active"><i class="fa-solid fa-code-merge"></i> Merge PDFs</a></li>
+          <li><a href="#"><i class="fa-solid fa-arrows-split-up-and-left"></i> Split PDF</a></li>
+          <!--           <li><a href="#">Add or Delete Pages</a></li>
+<li><a href="#">Reorder Pages</a></li>
+<li><a href="#">Rotate Pages</a></li>
+ -->
+          <li><a href="#"><i class="fa-solid fa-pen-to-square"></i> Edit Text (Preview Mode)</a></li>
+        </ul>
+      </div>
+      <div class="tool-section">
+        <h3>Convert from PDF</h3>
+        <ul>
+          <!--           <li><a href="#"> <i class="fa-solid fa-file-word"></i> PDF to Word </a> </li> -->
+          <li><a href="#"><i class="fa-solid fa-file-image"></i> PDF to JPG</a></li>
+          <!--           <li><a href="#"><i class="fa-solid fa-file-excel"></i> PDF to Excel</a></li>
+ -->
+        </ul>
+      </div>
+      
+      <div class="tool-section">
+        <h3>Convert to PDF</h3>
+        <ul>
+          <li><a href="#"><i class="fa-solid fa-file-image"></i> JPG to PDF</a></li>
+          <!--           <li><a href="#"><i class="fa-solid fa-file-word"></i> Word to PDF</a></li>
+ -->
+          <li><a href="#"><i class="fa-solid fa-file-excel"></i> Excel to PDF</a></li>
+        </ul>
+      </div>
+      
+    </aside>
