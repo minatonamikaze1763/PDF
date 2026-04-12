@@ -1255,36 +1255,75 @@ function initImageCompressor() {
   
   let files = [];
   
+  // 📂 File select
   input.addEventListener("change", (e) => {
     files = Array.from(e.target.files);
-    render();
+    renderFileList();
   });
   
-  function render() {
-    list.innerHTML = files.map(f => `<p>${f.name}</p>`).join("");
+  // 📋 Render list (matches your CSS)
+  function renderFileList() {
+    list.innerHTML = "<ul></ul>";
+    const ul = list.querySelector("ul");
+    
+    let totalSize = 0;
+    
+    files.forEach((file, index) => {
+      const sizeKB = file.size / 1024;
+      totalSize += sizeKB;
+      
+      const li = document.createElement("li");
+      
+      li.innerHTML = `
+        <span>${file.name} (${sizeKB.toFixed(1)} KB)</span>
+        <button class="remove-btn">x</button>
+      `;
+      
+      li.querySelector(".remove-btn").onclick = () => {
+        files.splice(index, 1);
+        renderFileList();
+      };
+      
+      ul.appendChild(li);
+    });
+    
+    if (files.length > 0) {
+      const summary = document.createElement("div");
+      summary.className = "indicator";
+      summary.textContent = `Total Files: ${files.length} | Total Size: ${(totalSize / 1024).toFixed(2)} MB`;
+      list.appendChild(summary);
+    }
   }
   
+  // 🚀 Compress button
   btn.addEventListener("click", async () => {
     const targetKB = parseInt(targetInput.value);
+    
     if (!targetKB || files.length === 0) {
       status.innerHTML = "<span style='color:red'>Enter target KB & select files</span>";
       return;
     }
     
-    status.textContent = "Compressing images...";
     const zip = new JSZip();
+    status.innerHTML = "Compressing images...";
     
     for (let file of files) {
-      const compressed = await compressImage(file, targetKB);
-      zip.file(file.name, compressed);
+      status.innerHTML = `⚙️ Processing: ${file.name}`;
+      
+      const result = await compressImage(file, targetKB);
+      
+      zip.file(file.name, result.blob);
+      
+      status.innerHTML += `<br>✅ ${file.name} → ${result.sizeKB.toFixed(1)} KB (Closest)`;
     }
     
     const content = await zip.generateAsync({ type: "blob" });
     saveAs(content, "compressed_images.zip");
     
-    status.innerHTML = "<span style='color:green'>✅ Images compressed</span>";
+    status.innerHTML += "<br><span style='color:green'>🎉 All images compressed</span>";
   });
   
+  // 🔥 Smart compression (closest match)
   async function compressImage(file, targetKB) {
     return new Promise((resolve) => {
       const img = new Image();
@@ -1293,34 +1332,52 @@ function initImageCompressor() {
       reader.onload = e => img.src = e.target.result;
       reader.readAsDataURL(file);
       
-      img.onload = () => {
+      img.onload = async () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         
-        canvas.width = img.width;
-        canvas.height = img.height;
+        let bestBlob = null;
+        let bestDiff = Infinity;
+        let bestSize = 0;
         
-        let quality = 0.9;
+        // 🎯 Try multiple resolutions + qualities
+        const scales = [1, 0.8, 0.6, 0.4];
+        const qualities = [0.9, 0.7, 0.5, 0.3, 0.2];
         
-        function attempt() {
-          ctx.drawImage(img, 0, 0);
+        for (let scale of scales) {
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
           
-          canvas.toBlob((blob) => {
-            if (blob.size / 1024 <= targetKB || quality <= 0.1) {
-              resolve(blob);
-            } else {
-              quality -= 0.05;
-              attempt();
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          
+          for (let quality of qualities) {
+            const blob = await new Promise(res =>
+              canvas.toBlob(res, "image/jpeg", quality)
+            );
+            
+            const sizeKB = blob.size / 1024;
+            const diff = Math.abs(sizeKB - targetKB);
+            
+            // save best match
+            if (diff < bestDiff) {
+              bestDiff = diff;
+              bestBlob = blob;
+              bestSize = sizeKB;
             }
-          }, "image/jpeg", quality);
+            
+            // 🎯 close enough → stop early
+            if (sizeKB <= targetKB && diff < 10) {
+              return resolve({ blob, sizeKB });
+            }
+          }
         }
         
-        attempt();
+        resolve({ blob: bestBlob, sizeKB: bestSize });
       };
     });
   }
 }
-
 
 function initPdfCompressor() {
   const input = document.getElementById("pdfCompressInput");
