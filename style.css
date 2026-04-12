@@ -64,7 +64,9 @@ body {
   font-size: 1rem;
   margin-bottom: 0.3rem;
 }
-
+.input-group{
+  margin-bottom: 1rem;
+}
 .tool-section ul {
   list-style: none;
   padding: 0;

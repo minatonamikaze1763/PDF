@@ -158,11 +158,12 @@ const tools = {
     <input type="number" id="pdfTargetSize" placeholder="Enter size in KB" />
   </div>
 
-  <div id="pdfCompressList" class="file-list"></div>
 
   <button id="compressPdfBtn">Compress PDFs</button>
 
   <div id="pdfCompressStatus" class="status"></div>
+  <div id="pdfCompressList" class="file-list"></div>
+
 </div>
 `,
   
@@ -181,11 +182,12 @@ const tools = {
     <input type="number" id="imgTargetSize" placeholder="Enter size in KB" />
   </div>
 
-  <div id="imgCompressList" class="file-list"></div>
 
   <button id="compressImgBtn">Compress Images</button>
 
   <div id="imgCompressStatus" class="status"></div>
+  <div id="imgCompressList" class="file-list"></div>
+
 </div>
 `,
 };
