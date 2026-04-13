@@ -1315,8 +1315,17 @@ function initImageCompressor() {
       const result = await compressImage(file, targetKB);
       
       zip.file(file.name, result.blob);
-      
-      status.innerHTML += `<br>✅ ${file.name} → ${result.sizeKB.toFixed(1)} KB (Closest)`;
+      if (result.skipped) {
+        status.innerHTML += `
+    🟡 ${file.name} → ${result.sizeKB.toFixed(1)} KB 
+    <br>Already below target, skipped
+  `;
+      } else {
+        status.innerHTML += `
+    ✅ ${file.name} → ${result.sizeKB.toFixed(1)} KB 
+    <br>Compressed
+  `;
+      }
     }
     
     const content = await zip.generateAsync({ type: "blob" });
@@ -1328,6 +1337,19 @@ function initImageCompressor() {
   // 🔥 Smart compression (closest match)
   async function compressImage(file, targetKB) {
     return new Promise((resolve) => {
+      
+      // 🔴 ADD THIS BLOCK
+      const fileSizeKB = file.size / 1024;
+      
+      if (fileSizeKB <= targetKB) {
+        return resolve({
+          blob: file, // original file as blob
+          sizeKB: fileSizeKB,
+          skipped: true,
+          message: `Image already below target (${fileSizeKB.toFixed(2)} KB)`
+        });
+      }
+      
       const img = new Image();
       const reader = new FileReader();
       
