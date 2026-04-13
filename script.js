@@ -1450,13 +1450,21 @@ function initPdfCompressor() {
     for (let file of files) {
       const result = await compressPDF(file, targetKB);
       
+      // 📦 Always add to zip (compressed OR original)
       zip.file(file.name, result.bytes);
       
-      status.innerHTML = `
-  ✅ ${file.name} → ${result.sizeKB.toFixed(1)} KB (Closest to ${targetKB} KB)
-`;
-      
-      
+      // 🎯 Handle skipped vs compressed
+      if (result.skipped) {
+        status.innerHTML = `
+      🟡 ${file.name} → ${result.sizeKB.toFixed(1)} KB 
+      <br>Already below target (${targetKB} KB), skipped compression
+    `;
+      } else {
+        status.innerHTML = `
+      ✅ ${file.name} → ${result.sizeKB.toFixed(1)} KB 
+      <br>(Closest to ${targetKB} KB)
+    `;
+      }
     }
     
     const content = await zip.generateAsync({ type: "blob" });
@@ -1467,6 +1475,21 @@ function initPdfCompressor() {
   
   // 🔥 REAL PDF compression (fixed)
   async function compressPDF(file, targetKB) {
+    
+    // 🔴 ADD THIS BLOCK HERE
+    const fileSizeKB = file.size / 1024;
+    
+    if (fileSizeKB <= targetKB) {
+      return {
+        bytes: await file.arrayBuffer(),
+        sizeKB: fileSizeKB,
+        skipped: true,
+        message: `File already below target size (${fileSizeKB.toFixed(2)} KB)`
+      };
+    }
+    
+    // 🔽 your existing code continues
+    
     const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
     const { PDFDocument } = PDFLib;
     
