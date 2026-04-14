@@ -156,6 +156,10 @@ const tools = {
   <div class="input-group">
     <label>Target Size (KB)</label>
     <input type="number" id="pdfTargetSize" placeholder="Enter size in KB" />
+  <label>
+  <input type="checkbox" id="forcePortrait">
+  Force Portrait Mode
+</label>
   </div>
 
 
@@ -1409,7 +1413,7 @@ function initPdfCompressor() {
   const status = document.getElementById("pdfCompressStatus");
   const targetInput = document.getElementById("pdfTargetSize");
   const list = document.getElementById("pdfCompressList");
-  
+  const portraitToggle = document.getElementById("forcePortrait");
   let files = [];
   
   // 📂 Handle file selection
@@ -1470,8 +1474,7 @@ function initPdfCompressor() {
     const zip = new JSZip();
     
     for (let file of files) {
-      const result = await compressPDF(file, targetKB);
-      
+      const result = await compressPDF(file, targetKB, portraitToggle.checked);
       // 📦 Always add to zip (compressed OR original)
       zip.file(file.name, result.bytes);
       
@@ -1496,9 +1499,9 @@ function initPdfCompressor() {
   });
   
   // 🔥 REAL PDF compression (fixed)
-  async function compressPDF(file, targetKB) {
+  async function compressPDF(file, targetKB, forcePortrait) {
     
-    // 🔴 ADD THIS BLOCK HERE
+    // 🔴 Skip if already smaller
     const fileSizeKB = file.size / 1024;
     
     if (fileSizeKB <= targetKB) {
@@ -1509,8 +1512,6 @@ function initPdfCompressor() {
         message: `File already below target size (${fileSizeKB.toFixed(2)} KB)`
       };
     }
-    
-    // 🔽 your existing code continues
     
     const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
     const { PDFDocument } = PDFLib;
@@ -1550,13 +1551,39 @@ function initPdfCompressor() {
           const imgBytes = await blob.arrayBuffer();
           const img = await newPdf.embedJpg(imgBytes);
           
-          const newPage = newPdf.addPage([viewport.width, viewport.height]);
+          // 📐 Original dimensions
+          let pageWidth = viewport.width;
+          let pageHeight = viewport.height;
           
+          // 🔄 Force portrait if enabled
+          let rotate = false;
+          if (forcePortrait && pageWidth > pageHeight) {
+            [pageWidth, pageHeight] = [pageHeight, pageWidth];
+            rotate = true;
+          }
+          
+          const newPage = newPdf.addPage([pageWidth, pageHeight]);
+          
+          // 📏 Maintain aspect ratio (no stretching)
+          const scaleFactor = Math.min(
+            pageWidth / viewport.width,
+            pageHeight / viewport.height
+          );
+          
+          const drawWidth = viewport.width * scaleFactor;
+          const drawHeight = viewport.height * scaleFactor;
+          
+          // 📍 Center image
+          const x = (pageWidth - drawWidth) / 2;
+          const y = (pageHeight - drawHeight) / 2;
+          
+          // 🔄 Draw with rotation if needed
           newPage.drawImage(img, {
-            x: 0,
-            y: 0,
-            width: viewport.width,
-            height: viewport.height
+            x,
+            y,
+            width: drawWidth,
+            height: drawHeight,
+            rotate: rotate ? PDFLib.degrees(90) : undefined
           });
         }
         
@@ -1572,17 +1599,16 @@ function initPdfCompressor() {
           bestSize = sizeKB;
         }
         
-        // 🎯 Perfect or very close → stop early
+        // 🎯 Stop early if very close
         if (sizeKB <= targetKB && diff < 20) {
           return { bytes: outputBytes, sizeKB };
         }
       }
     }
     
-    // fallback best
+    // 🔚 fallback best result
     return { bytes: bestOutput, sizeKB: bestSize };
   }
-  
   
   
 }
