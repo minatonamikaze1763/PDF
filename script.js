@@ -156,7 +156,7 @@ const tools = {
   <div class="input-group">
     <label>Target Size (KB)</label>
     <input type="number" id="pdfTargetSize" placeholder="Enter size in KB" />
-  <label>
+  <label style="display:none;" >
   <input type="checkbox" id="forcePortrait">
   Force Portrait Mode
 </label>
