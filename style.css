@@ -251,7 +251,8 @@ button:hover {
 /* ===== REMOVE BUTTON ===== */
 .remove-btn {
   background: #ff4b4b;
-  padding: 9px 10px;
+  border-radius: 5px;
+  padding: 9px 15px;
   font-size: 14px;
   width: max-content;
 }
