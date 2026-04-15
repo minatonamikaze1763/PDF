@@ -486,7 +486,59 @@ function initSplit() {
   const fileInput = document.getElementById('splitPdf');
   const btn = document.getElementById('splitBtn');
   const status = document.getElementById('status');
+  const dropZone = document.getElementById("splitPdf");
   
+  // 🟢 Prevent default browser behavior
+  ["dragenter", "dragover", "dragleave", "drop"].forEach(event => {
+    dropZone.addEventListener(event, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+  
+  // 🎯 Highlight on drag
+  ["dragenter", "dragover"].forEach(event => {
+    dropZone.addEventListener(event, () => {
+      dropZone.classList.add("drag-active");
+    });
+  });
+  
+  // ❌ Remove highlight (IMPORTANT: check relatedTarget)
+  ["dragleave", "drop"].forEach(event => {
+    dropZone.addEventListener(event, (e) => {
+      // prevent flicker when moving inside dropzone
+      if (event === "dragleave" && dropZone.contains(e.relatedTarget)) return;
+      dropZone.classList.remove("drag-active");
+    });
+  });
+  
+  // 📂 Handle dropped file
+  dropZone.addEventListener("drop", async (e) => {
+    const file = Array.from(e.dataTransfer.files)
+      .find(f => f.name.toLowerCase().endsWith(".pdf"));
+    
+    if (!file) {
+      status.textContent = "❌ Only PDF files allowed.";
+      return;
+    }
+    
+    // 🔥 Assign file to input (so rest of code works same)
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    fileInput.files = dt.files;
+    
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+      const totalPages = pdfDoc.getPageCount();
+      
+      status.innerHTML = `📄 Selected: <b>${file.name}</b> (${totalPages} pages)`;
+    } catch {
+      status.textContent = "❌ Invalid PDF file.";
+    }
+  });
+  
+  // 📂 File input change
   fileInput.addEventListener('change', async () => {
     const file = fileInput.files[0];
     if (!file) {
@@ -498,6 +550,7 @@ function initSplit() {
       const arrayBuffer = await file.arrayBuffer();
       const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
       const totalPages = pdfDoc.getPageCount();
+      
       status.innerHTML = `📄 Selected: <b>${file.name}</b> (${totalPages} pages)`;
     } catch {
       status.textContent = "❌ Invalid PDF file.";
@@ -505,8 +558,7 @@ function initSplit() {
   });
   
   btn.addEventListener('click', splitPdfFile);
-}
-// ========== end =========
+}// ========== end =========
 
 
 // ========== pdf to word not working =========
