@@ -558,7 +558,7 @@ function initSplit() {
   });
   
   btn.addEventListener('click', splitPdfFile);
-}// ========== end =========
+} // ========== end =========
 
 
 // ========== pdf to word not working =========
@@ -917,7 +917,7 @@ function initJpgToPdf() {
     });
     
     // Remove logic
-    document.querySelectorAll(".img-remove-btn").forEach((btn) => {
+    document.querySelectorAll(".remove-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const idx = +e.currentTarget.dataset.index;
         jpgFiles.splice(idx, 1);
