@@ -1259,7 +1259,44 @@ function initImageCompressor() {
   const targetInput = document.getElementById("imgTargetSize");
   
   let files = [];
+  const dropZone = document.getElementById("imgCompressDrop");
   
+  // 🛑 Prevent browser default (important)
+  ["dragenter", "dragover", "dragleave", "drop"].forEach(event => {
+    dropZone.addEventListener(event, e => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+  
+  // ✨ Highlight when dragging
+  ["dragenter", "dragover"].forEach(event => {
+    dropZone.addEventListener(event, () => {
+      dropZone.classList.add("drag-active");
+    });
+  });
+  
+  // ❌ Remove highlight
+  ["dragleave", "drop"].forEach(event => {
+    dropZone.addEventListener(event, () => {
+      dropZone.classList.remove("drag-active");
+    });
+  });
+  
+  // 📂 Handle dropped images
+  dropZone.addEventListener("drop", (e) => {
+    const droppedFiles = Array.from(e.dataTransfer.files)
+      .filter(file => file.type.startsWith("image/"));
+    
+    if (droppedFiles.length === 0) return;
+    
+    // 🔥 Merge with existing files
+    files = [...files, ...droppedFiles].filter(
+      (file, index, self) =>
+      index === self.findIndex(f => f.name === file.name && f.size === file.size)
+    );
+    renderFileList();
+  });
   // 📂 File select
   input.addEventListener("change", (e) => {
     files = Array.from(e.target.files);
@@ -1414,7 +1451,44 @@ function initPdfCompressor() {
   const list = document.getElementById("pdfCompressList");
   const portraitToggle = document.getElementById("forcePortrait");
   let files = [];
+  const dropZone = document.getElementById("pdfCompressDrop");
   
+  // 🟢 Prevent default behavior
+  ["dragenter", "dragover", "dragleave", "drop"].forEach(event => {
+    dropZone.addEventListener(event, e => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+  
+  // 🎯 Highlight on drag
+  ["dragenter", "dragover"].forEach(event => {
+    dropZone.addEventListener(event, () => {
+      dropZone.classList.add("drag-active");
+    });
+  });
+  
+  // ❌ Remove highlight
+  ["dragleave", "drop"].forEach(event => {
+    dropZone.addEventListener(event, () => {
+      dropZone.classList.remove("drag-active");
+    });
+  });
+  
+  // 📂 Handle dropped files
+  dropZone.addEventListener("drop", (e) => {
+    const droppedFiles = Array.from(e.dataTransfer.files)
+      .filter(file => file.name.toLowerCase().endsWith(".pdf"));
+    
+    if (droppedFiles.length === 0) return;
+    
+    // 🔥 Merge with existing files
+    files = [...files, ...droppedFiles].filter(
+      (file, index, self) =>
+      index === self.findIndex(f => f.name === file.name && f.size === file.size)
+    );
+    renderFileList();
+  });
   // 📂 Handle file selection
   input.addEventListener("change", (e) => {
     files = Array.from(e.target.files);

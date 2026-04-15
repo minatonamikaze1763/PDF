@@ -130,9 +130,6 @@ body {
   transition: transform 0.3s ease;
 }
 
-.container:hover {
-  transform: translateY(-4px);
-}
 
 /* ===== TEXT ===== */
 h1 {
