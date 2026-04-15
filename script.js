@@ -1250,6 +1250,25 @@ function initOrganizer() {
   document.getElementById('reorderPage').addEventListener('click', () => alert("Reorder feature not implemented yet."));
 }
 
+const dropZones = document.querySelectorAll(".dropZone");
+
+// ✨ Highlight when dragging
+["dragenter", "dragover"].forEach(event => {
+  dropZones.forEach(zone => {
+    zone.addEventListener(event, () => {
+      zone.classList.add("drag-active");
+    });
+  });
+});
+
+// ❌ Remove highlight
+["dragleave", "drop"].forEach(event => {
+  dropZones.forEach(zone => {
+    zone.addEventListener(event, () => {
+      zone.classList.remove("drag-active");
+    });
+  });
+});
 
 function initImageCompressor() {
   const input = document.getElementById("imgCompressInput");
