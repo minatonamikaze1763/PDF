@@ -84,23 +84,25 @@ body {
 }
 
 .tool-section li {
-  margin: 6px 0;
+  margin: 8px 0;
 }
 
 .tool-section a {
   display: block;
-  padding: 5px 10px;
+  padding: 5px 15px;
   border-radius: 8px;
   color: var(--text-muted);
+  background: var(--bg-secondary);
+
   text-decoration: none;
   transition: all 0.25s ease;
-  text-align: center;
 }
 
 .tool-section a:hover,
 .tool-section a.active {
-  background: var(--primary);
+  background:  #6366f1;
   transform: translateX(6px);
+  color: white;
 }
 
 /* ===== WORKSPACE ===== */
