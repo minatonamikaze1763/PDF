@@ -5,7 +5,6 @@ const docSection = `
     <h3>Why Choose Our Tool?</h3>
     <ul>
       <li><strong>Secure:</strong> All processing happens on your device — no files are ever uploaded to servers.</li>
-      <li><strong>No Uploads:</strong> Your data stays private, ensuring complete confidentiality.</li>
       <li><strong>Premium Experience:</strong> Every user is treated as a premium user — enjoy all features without paywalls.</li>
       <li><strong>Unlimited Access:</strong> Perform unlimited conversions, merges, and edits effortlessly.</li>
     </ul>
