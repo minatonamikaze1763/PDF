@@ -130,7 +130,18 @@ body {
   transition: transform 0.3s ease;
 }
 
+.dropZone {
+  border: 2px dashed #888;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
+.dropZone.drag-active {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+}
 /* ===== TEXT ===== */
 h1 {
   text-align: center;
