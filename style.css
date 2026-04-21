@@ -285,7 +285,8 @@ button:hover {
 .file-list li {
   background: var(--card-bg);
   border: 1px solid var(--border);
-  
+  transition: background 0.4s ease;
+
   padding: 10px;
   margin: 8px 0;
   border-radius: 6px;
