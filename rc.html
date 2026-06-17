@@ -82,18 +82,26 @@
         const groups = {};
 
         for (const file of input.files) {
-          const match = file.name.match(/^(.*)\s([12])\.pdf$/i);
+          let match = file.name.match(/^(.*?)\s+([12])\.pdf$/i);
 
-          if (!match) continue;
+          let baseName, part;
 
-          const baseName = match[1].trim();
-          const part = match[2];
+          if (match) {
+            baseName = match[1].trim();
+            part = match[2];
+          } else {
+            match = file.name.match(/^(.*?)(2?)\.pdf$/i);
+
+            if (!match) continue;
+
+            baseName = match[1].trim();
+            part = match[2] === "2" ? "2" : "1";
+          }
 
           if (!groups[baseName]) groups[baseName] = {};
 
           groups[baseName][part] = file;
         }
-
         const zip = new JSZip();
 
         let mergedCount = 0;
