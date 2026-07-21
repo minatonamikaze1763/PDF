@@ -393,3 +393,66 @@ button:hover {
     font-size: 1.3rem;
   }
 }
+
+#allMergeList {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 15px;
+
+  background: #252538;
+  border: 1px solid #444;
+  border-radius: 8px;
+
+  cursor: grab;
+}
+
+.file-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  overflow: hidden;
+}
+
+.file-icon {
+  font-size: 18px;
+}
+
+.file-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.remove-btn {
+  width: 34px;
+  height: 34px;
+  text-align: center;
+  border: none;
+  padding: 0 5px;
+  background: #ff4d4d;
+  color: #fff;
+
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.remove-btn:hover {
+  background: #ff1f1f;
+}
+
+.dragging {
+  opacity: 0.6;
+}
+#sortAZ {
+  margin-bottom: 15px;
+}

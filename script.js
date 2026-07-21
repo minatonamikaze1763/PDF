@@ -12,6 +12,45 @@ const docSection = `
 `;
 // ========= Tool Templates ==========
 const tools = {
+  allMerge: `
+<div class="container">
+
+<h1>
+<i class="fa-solid fa-layer-group"></i>
+All-in-One PDF Merger
+</h1>
+
+<label class="dropZone" id="allMergeDrop" for="allMergeFiles">
+Drag & Drop PDFs or Images
+</label>
+
+<input
+type="file"
+id="allMergeFiles"
+multiple
+accept=".pdf,image/*"
+/>
+
+<div class="input-group">
+<label>Output PDF Name</label>
+<input
+type="text"
+id="allMergeName"
+value="merged.pdf"
+placeholder="merged.pdf"
+/>
+</div>
+
+<button id="allMergeBtn">
+Generate PDF
+</button>
+
+<div id="allMergeStatus" class="status"></div>
+
+<div id="allMergeList" class="file-list"></div>
+
+</div>
+`,
   merge: `
 <div class="container">
   <h1><i class="fa-solid fa-code-merge"></i> Merge PDF Files</h1>
@@ -316,7 +355,9 @@ function initTool(name) {
     case "compressPdf":
       initPdfCompressor();
       break;
-
+    case "allMerge":
+      initAllMerge();
+      break;
     case "compressImg":
       initImageCompressor();
       break;
@@ -1842,4 +1883,192 @@ function initPdfCompressor() {
     // 🔚 fallback best result
     return { bytes: bestOutput, sizeKB: bestSize };
   }
+}
+
+async function initAllMerge() {
+  const fileInput = document.getElementById("allMergeFiles");
+  const dropZone = document.getElementById("allMergeDrop");
+  const fileList = document.getElementById("allMergeList");
+  const status = document.getElementById("allMergeStatus");
+  const mergeBtn = document.getElementById("allMergeBtn");
+  const outputName = document.getElementById("allMergeName");
+
+  if (!outputName.value.trim()) outputName.value = "merged.pdf";
+
+  let files = [];
+
+  //---------------------------------
+  // Add Files
+  //---------------------------------
+
+  function addFiles(selected) {
+    [...selected].forEach((file) => {
+      if (file.type.startsWith("image/") || file.type === "application/pdf") {
+        files.push(file);
+      }
+    });
+
+    renderList();
+  }
+
+  //---------------------------------
+  // Render List
+  //---------------------------------
+
+  function renderList() {
+    fileList.innerHTML = "";
+
+    files.forEach((file, index) => {
+      const item = document.createElement("div");
+      item.className = "file-item";
+      item.dataset.index = index;
+
+      const icon = file.type === "application/pdf" ? "📄" : "🖼️";
+
+      item.innerHTML = `
+            <div class="file-left">
+                <span class="file-icon">${icon}</span>
+                <span class="file-name">${file.name}</span>
+            </div>
+
+            <button class="remove-btn">✖</button>
+        `;
+
+      item.querySelector(".remove-btn").onclick = () => {
+        files.splice(index, 1);
+        renderList();
+      };
+
+      fileList.appendChild(item);
+    });
+
+    if (fileList.sortable) fileList.sortable.destroy();
+
+    fileList.sortable = new Sortable(fileList, {
+      animation: 150,
+      ghostClass: "dragging",
+
+      onEnd: (e) => {
+        const moved = files.splice(e.oldIndex, 1)[0];
+        files.splice(e.newIndex, 0, moved);
+      },
+    });
+  }
+
+  //---------------------------------
+  // Drag & Drop
+  //---------------------------------
+
+  fileInput.onchange = (e) => addFiles(e.target.files);
+
+  dropZone.ondragover = (e) => {
+    e.preventDefault();
+    dropZone.classList.add("drag");
+  };
+
+  dropZone.ondragleave = () => dropZone.classList.remove("drag");
+
+  dropZone.ondrop = (e) => {
+    e.preventDefault();
+
+    dropZone.classList.remove("drag");
+
+    addFiles(e.dataTransfer.files);
+  };
+
+  //---------------------------------
+  // Sort Buttons
+  //---------------------------------
+
+  const controls = document.createElement("div");
+
+  controls.innerHTML = `
+        <button id="sortAZ">Sort A-Z</button>
+        <button id="sortZA">Sort Z-A</button>
+    `;
+
+  fileList.before(controls);
+
+  document.getElementById("sortAZ").onclick = () => {
+    files.sort((a, b) => a.name.localeCompare(b.name));
+
+    renderList();
+  };
+
+  document.getElementById("sortZA").onclick = () => {
+    files.sort((a, b) => b.name.localeCompare(a.name));
+
+    renderList();
+  };
+
+  //---------------------------------
+  // Merge
+  //---------------------------------
+
+  mergeBtn.onclick = async () => {
+    if (files.length === 0) {
+      alert("Select files.");
+
+      return;
+    }
+
+    status.innerHTML = "Generating PDF...";
+
+    const pdfDoc = await PDFLib.PDFDocument.create();
+
+    for (const file of files) {
+      //---------------------------------
+      // PDF
+      //---------------------------------
+
+      if (file.type === "application/pdf") {
+        const bytes = await file.arrayBuffer();
+
+        const src = await PDFLib.PDFDocument.load(bytes);
+
+        const copied = await pdfDoc.copyPages(src, src.getPageIndices());
+
+        copied.forEach((page) => pdfDoc.addPage(page));
+      }
+
+      //---------------------------------
+      // IMAGE
+      //---------------------------------
+      else {
+        const bytes = await file.arrayBuffer();
+
+        let img;
+
+        if (file.type === "image/png") {
+          img = await pdfDoc.embedPng(bytes);
+        } else {
+          img = await pdfDoc.embedJpg(bytes);
+        }
+
+        const page = pdfDoc.addPage([img.width, img.height]);
+
+        page.drawImage(img, {
+          x: 0,
+          y: 0,
+          width: img.width,
+          height: img.height,
+        });
+      }
+    }
+
+    const pdfBytes = await pdfDoc.save();
+
+    let name = outputName.value.trim();
+
+    if (!name.toLowerCase().endsWith(".pdf")) name += ".pdf";
+
+    saveAs(
+      new Blob([pdfBytes], {
+        type: "application/pdf",
+      }),
+      name,
+    );
+
+    status.innerHTML = `✅ Created ${name}`;
+  };
 }
